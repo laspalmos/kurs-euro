@@ -128,6 +128,35 @@ def znajdz_kurs(kod_waluty: str, data_startowa: date, max_prob: int = 5) -> tupl
     return None, None
 
 
+def oblicz_streak(plik: str) -> int:
+    """
+    Zwraca liczbę kolejnych dni roboczych z rzędu, dla których zapisano kursy
+    wszystkich walut — licząc wstecz od ostatniej daty w pliku.
+    """
+    if not os.path.isfile(plik):
+        return 0
+    with open(plik, newline="", encoding="utf-8") as f:
+        wiersze = list(csv.DictReader(f))
+    if not wiersze:
+        return 0
+
+    # Zbierz daty, dla których zapisano komplet walut
+    from collections import Counter
+    liczba_walut = len(WALUTY)
+    licznik = Counter(w["data_kursu"] for w in wiersze)
+    daty_kompletne = {date.fromisoformat(d) for d, n in licznik.items() if n >= liczba_walut}
+
+    if not daty_kompletne:
+        return 0
+
+    dzien = max(daty_kompletne)
+    streak = 0
+    while dzien in daty_kompletne:
+        streak += 1
+        dzien = poprzedni_dzien_roboczy(dzien)
+    return streak
+
+
 def wczytaj_istniejace(plik: str) -> set[tuple[str, str]]:
     """Zwraca zbiór par (data_kursu, waluta) już zapisanych w pliku."""
     if not os.path.isfile(plik):
@@ -179,6 +208,9 @@ def main() -> None:
         print(f"\nZapisano {zapisanych} kursów do pliku: {PLIK_CSV}")
     else:
         print(f"\nBrak nowych danych — kursy już istnieją w pliku: {PLIK_CSV}")
+
+    streak = oblicz_streak(PLIK_CSV)
+    print(f"Streak: {streak} {'dzień roboczy' if streak == 1 else 'dni roboczych' if 2 <= streak <= 4 else 'dni roboczych'} z rzędu")
 
 
 if __name__ == "__main__":
