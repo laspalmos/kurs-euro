@@ -50,15 +50,18 @@ def swieta_polskie(rok: int) -> set[date]:
 
     stale = {
         date(rok, 1, 1),   # Nowy Rok
-        date(rok, 1, 6),   # Trzech Króli
+        date(rok, 1, 6),   # Trzech Króli (od 2011)
         date(rok, 5, 1),   # Święto Pracy
-        date(rok, 5, 3),   # Konstytucja 3 Maja
+        date(rok, 5, 3),   # Konstytucja 3 Maja (od 1990)
         date(rok, 8, 15),  # Wniebowzięcie NMP
         date(rok, 11, 1),  # Wszystkich Świętych
-        date(rok, 11, 11), # Święto Niepodległości
+        date(rok, 11, 11), # Święto Niepodległości (od 1989)
         date(rok, 12, 25), # Boże Narodzenie
         date(rok, 12, 26), # Drugi dzień Bożego Narodzenia
     }
+    # Wigilia dodana ustawą z 6.12.2024 (Dz.U. 2024 poz. 1965), obowiązuje od 1.02.2025
+    if rok >= 2025:
+        stale.add(date(rok, 12, 24))
 
     ruchome = {
         w,                          # Niedziela Wielkanocna (zawsze nd.)
