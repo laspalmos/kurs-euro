@@ -7,7 +7,7 @@ Skrypt pobierający dzienne kursy USD, EUR i GBP z [API Narodowego Banku Polskie
 Według polskich przepisów rachunkowych do przeliczenia walut stosuje się kurs z **ostatniego dnia roboczego poprzedzającego dzień transakcji**. Skrypt automatycznie wyznacza tę datę, uwzględniając:
 
 - weekendy (sobota, niedziela)
-- polskie święta ustawowe ([ustawa z 18.01.1951 o dniach wolnych od pracy](https://eli.gov.pl/eli/DU/1951/28/ogl))
+- polskie święta ustawowe ([ustawa z 18.01.1951 o dniach wolnych od pracy](https://api.sejm.gov.pl/eli/acts/DU/1951/28/text.html))
 - święta ruchome: Wielkanoc, Poniedziałek Wielkanocny, Zielone Świątki, Boże Ciało
 - zastępczy dzień wolny, gdy święto stałe wypada w niedzielę
 
