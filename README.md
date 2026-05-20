@@ -7,10 +7,10 @@ Skrypt pobierający dzienne kursy USD, EUR i GBP z [API Narodowego Banku Polskie
 Według polskich przepisów rachunkowych do przeliczenia walut stosuje się kurs z **ostatniego dnia roboczego poprzedzającego dzień transakcji**. Skrypt automatycznie wyznacza tę datę, uwzględniając:
 
 - weekendy (sobota, niedziela)
-- polskie święta ustawowe ([ustawa z 18.01.1951 o dniach wolnych od pracy](https://api.sejm.gov.pl/eli/acts/DU/1951/28/text.html))
+- polskie święta ustawowe ([tekst jednolity ustawy o dniach wolnych od pracy, Dz.U. 2025 poz. 296](http://dziennikustaw.gov.pl/D2025000029601.pdf))
 - święta ruchome: Wielkanoc, Poniedziałek Wielkanocny, Zielone Świątki, Boże Ciało
 - zastępczy dzień wolny, gdy święto stałe wypada w niedzielę
-- Wigilia Bożego Narodzenia (24 grudnia) jako dzień wolny od 1 lutego 2025 r. (Dz.U. 2024 poz. 1965)
+- Wigilia Bożego Narodzenia (24 grudnia) jako dzień wolny od 1 lutego 2025 r.
 
 ## Wymagania
 
