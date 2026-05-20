@@ -5,6 +5,8 @@ Pobiera kursy USD, EUR, GBP z NBP z poprzedniego dnia roboczego
 """
 
 import csv
+import re
+import subprocess
 import sys
 from datetime import date, timedelta
 from urllib.request import urlopen
@@ -166,18 +168,73 @@ def wczytaj_istniejace(plik: str) -> set[tuple[str, str]]:
 
 
 def zapisz_csv(wiersze: list[dict], plik: str) -> int:
-    """Dopisuje tylko wiersze nieobecne w pliku. Zwraca liczbę faktycznie zapisanych."""
-    istniejace = wczytaj_istniejace(plik)
-    nowe = [w for w in wiersze if (w["data_kursu"], w["waluta"]) not in istniejace]
+    """
+    Scala nowe wiersze z istniejącymi, sortuje wg daty i waluty, zapisuje cały plik.
+    Dzięki temu nowe kursy zawsze trafiają na koniec w kolejności chronologicznej.
+    Zwraca liczbę faktycznie dodanych wierszy.
+    """
+    istniejace_klucze = wczytaj_istniejace(plik)
+    nowe = [w for w in wiersze if (w["data_kursu"], w["waluta"]) not in istniejace_klucze]
     if not nowe:
         return 0
-    plik_istnieje = os.path.isfile(plik)
-    with open(plik, "a", newline="", encoding="utf-8") as f:
+
+    # Wczytaj dotychczasowe wiersze
+    stare: list[dict] = []
+    if os.path.isfile(plik):
+        with open(plik, newline="", encoding="utf-8") as f:
+            stare = list(csv.DictReader(f))
+
+    wszystkie = stare + nowe
+    wszystkie.sort(key=lambda r: (r["data_kursu"], r["waluta"]))
+
+    with open(plik, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=["data_kursu", "waluta", "kurs_mid"])
-        if not plik_istnieje:
-            writer.writeheader()
-        writer.writerows(nowe)
+        writer.writeheader()
+        writer.writerows(wszystkie)
+
     return len(nowe)
+
+
+def zaktualizuj_readme_streak(streak: int) -> None:
+    readme = os.path.join(_KATALOG, "README.md")
+    if not os.path.isfile(readme):
+        return
+    jednostka = "dzień roboczy" if streak == 1 else "dni robocze" if 2 <= streak <= 4 else "dni roboczych"
+    nowa_linia = f"**Streak:** {streak} {jednostka} z rzędu"
+    with open(readme, encoding="utf-8") as f:
+        tekst = f.read()
+    zaktualizowany = re.sub(
+        r"(<!-- streak -->).*?(<!-- /streak -->)",
+        f"\\1\n{nowa_linia}\n\\2",
+        tekst,
+        flags=re.DOTALL,
+    )
+    if zaktualizowany == tekst:
+        return
+    with open(readme, "w", encoding="utf-8") as f:
+        f.write(zaktualizowany)
+
+
+def wypchnij_streak(streak: int) -> None:
+    readme = os.path.join(_KATALOG, "README.md")
+    gh = os.path.expanduser("~/.local/bin/gh")
+    git_env = {**os.environ, "PATH": f"{os.path.dirname(gh)}:/usr/bin:/bin"}
+    try:
+        subprocess.run(
+            ["git", "-C", _KATALOG, "add", readme, PLIK_CSV],
+            check=True, env=git_env, capture_output=True,
+        )
+        subprocess.run(
+            ["git", "-C", _KATALOG, "commit", "-m", f"Aktualizacja streak: {streak}"],
+            check=True, env=git_env, capture_output=True,
+        )
+        subprocess.run(
+            ["git", "-C", _KATALOG, "push"],
+            check=True, env=git_env, capture_output=True,
+        )
+        print("README i CSV wypchnięte na GitHub.")
+    except subprocess.CalledProcessError:
+        print("Brak zmian do wypchnięcia lub błąd git.", file=sys.stderr)
 
 
 def main() -> None:
@@ -210,7 +267,10 @@ def main() -> None:
         print(f"\nBrak nowych danych — kursy już istnieją w pliku: {PLIK_CSV}")
 
     streak = oblicz_streak(PLIK_CSV)
-    print(f"Streak: {streak} {'dzień roboczy' if streak == 1 else 'dni roboczych' if 2 <= streak <= 4 else 'dni roboczych'} z rzędu")
+    jednostka = "dzień roboczy" if streak == 1 else "dni robocze" if 2 <= streak <= 4 else "dni roboczych"
+    print(f"Streak: {streak} {jednostka} z rzędu")
+    zaktualizuj_readme_streak(streak)
+    wypchnij_streak(streak)
 
 
 if __name__ == "__main__":
