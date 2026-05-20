@@ -55,7 +55,7 @@ data_kursu,waluta,kurs_mid
 Skrypt skonfigurowany jest do uruchamiania każdego dnia roboczego o 8:00:
 
 ```
-0 8 * * 1-5 /usr/bin/python3 /path/to/kurs-euro/pobierz_kursy.py >> /path/to/kurs-euro/kursy_nbp.log 2>&1
+0 8 * * 1-5 /usr/bin/python3 /home/username/kurs-euro/pobierz_kursy.py >> /home/username/kurs-euro/kursy_nbp.log 2>&1
 ```
 
 Logi zapisywane są do `kursy_nbp.log` (pomijane przez git).
