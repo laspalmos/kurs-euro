@@ -64,3 +64,21 @@ Skrypt skonfigurowany jest do uruchamiania każdego dnia roboczego o 8:00:
 ```
 
 Logi zapisywane są do `kursy_nbp.log` (pomijane przez git).
+
+## Nadrabianie pominiętych uruchomień (anacron)
+
+Jeśli komputer był wyłączony o 8:00, cron pomija uruchomienie. Anacron nadrabia je przy następnym włączeniu:
+
+```bash
+# 1. Utwórz katalog anacron
+mkdir -p ~/.anacron/spool
+
+# 2. Skopiuj plik konfiguracyjny
+cp anacrontab.example ~/.anacron/anacrontab
+# Edytuj ścieżki w ~/.anacron/anacrontab jeśli projekt jest w innej lokalizacji
+
+# 3. Dodaj do crontab (uruchamia anacron przy każdym starcie systemu)
+(crontab -l; echo "@reboot /usr/sbin/anacron -s -t ~/.anacron/anacrontab -S ~/.anacron/spool") | crontab -
+```
+
+Anacron uruchomi skrypt z 10-minutowym opóźnieniem po starcie, ale tylko jeśli nie był uruchomiony danego dnia.
