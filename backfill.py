@@ -1,14 +1,36 @@
 #!/usr/bin/env python3
-"""Jednorazowy backfill kursów dla podanego zakresu dat."""
+"""Jednorazowy backfill kursów dla podanego zakresu dat.
 
+Użycie:
+    python3 backfill.py RRRR-MM-DD RRRR-MM-DD
+"""
+
+import os
 import sys
 from datetime import date, timedelta
 
-sys.path.insert(0, "/home/lubapl/claude-prj/kurs-euro")
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from pobierz_kursy import czy_dzien_roboczy, pobierz_kurs_nbp, zapisz_csv, WALUTY, PLIK_CSV
 
-START = date(2026, 5, 1)
-END   = date(2026, 5, 20)
+
+def parse_date(s: str) -> date:
+    try:
+        return date.fromisoformat(s)
+    except ValueError:
+        print(f"Błędna data: {s!r} — oczekiwany format RRRR-MM-DD", file=sys.stderr)
+        sys.exit(1)
+
+
+if len(sys.argv) != 3:
+    print(f"Użycie: {sys.argv[0]} DATA-OD DATA-DO  (np. 2026-05-01 2026-05-20)", file=sys.stderr)
+    sys.exit(1)
+
+START = parse_date(sys.argv[1])
+END   = parse_date(sys.argv[2])
+
+if START > END:
+    print("DATA-OD nie może być późniejsza niż DATA-DO", file=sys.stderr)
+    sys.exit(1)
 
 dzien = START
 while dzien <= END:
