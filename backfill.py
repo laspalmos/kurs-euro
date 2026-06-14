@@ -4,7 +4,7 @@
 import sys
 from datetime import date, timedelta
 
-sys.path.insert(0, "/home/lubapl/claude-prj/kurs-euro")
+sys.path.insert(0, "/home/lubapl/hq/kurs-euro")
 from pobierz_kursy import czy_dzien_roboczy, pobierz_kurs_nbp, zapisz_csv, WALUTY, PLIK_CSV
 
 START = date(2026, 5, 1)
