@@ -3,4 +3,4 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 HOME=/home/lubapl
 
 # okres  opóźnienie  id-zadania       polecenie
-1        10          kursy-nbp-dzienne  /usr/bin/python3 /home/lubapl/claude-prj/kurs-euro/pobierz_kursy.py >> /home/lubapl/claude-prj/kurs-euro/kursy_nbp.log 2>&1
+1        10          kursy-nbp-dzienne  /usr/bin/python3 /home/lubapl/hq/kurs-euro/pobierz_kursy.py >> /home/lubapl/hq/kurs-euro/kursy_nbp.log 2>&1
