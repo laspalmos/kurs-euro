@@ -1,7 +1,7 @@
 # Kursy walut NBP
 
 <!-- streak -->
-**Streak:** 3 dni robocze z rzędu
+**Streak:** 4 dni robocze z rzędu
 <!-- /streak -->
 
 Skrypt pobierający dzienne kursy USD, EUR i GBP z [API Narodowego Banku Polskiego](https://api.nbp.pl) zgodnie z regułami rozliczeń księgowych.
